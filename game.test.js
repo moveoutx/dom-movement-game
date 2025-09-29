@@ -1,4 +1,4 @@
-import Game from '../index.js';
+import Game from './src/index.js';
 
 describe('Game', () => {
   let game;

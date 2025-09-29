@@ -11,21 +11,22 @@
     "deploy": "gh-pages -d dist"
   },
   "devDependencies": {
-    "@babel/core": "^7.22.0",
-    "@babel/preset-env": "^7.22.0",
-    "babel-jest": "^29.5.0",
-    "babel-loader": "^9.1.0",
-    "css-loader": "^6.8.0",
-    "eslint": "^8.42.0",
+    "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
+    "babel-jest": "^29.7.0",
+    "babel-loader": "^9.2.1",
+    "css-loader": "^6.11.0",
+    "eslint": "^8.57.1",
     "file-loader": "^6.2.0",
-    "html-webpack-plugin": "^5.5.0",
-    "jest": "^29.5.0",
-    "style-loader": "^3.3.0",
-    "webpack": "^5.88.0",
-    "webpack-cli": "^5.1.0",
-    "webpack-dev-server": "^4.15.0"
+    "html-webpack-plugin": "^5.6.4",
+    "jest": "^29.7.0",
+    "style-loader": "^3.3.4",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.2"
   },
   "dependencies": {
-    "gh-pages": "^5.0.0"
+    "gh-pages": "^5.0.0",
+    "jest-environment-jsdom": "^30.2.0"
   }
 }

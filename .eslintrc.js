@@ -3,6 +3,7 @@ module.exports = {
     browser: true,
     es2021: true,
     jest: true,
+    node: true,
   },
   extends: 'eslint:recommended',
   parserOptions: {
@@ -11,5 +12,9 @@ module.exports = {
   },
   rules: {
     'no-unused-vars': 'warn',
+    'no-console': 'warn',
+  },
+  globals: {
+    global: 'readonly',
   },
 };

@@ -1,13 +1,13 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-export default {
+module.exports = {
   entry: './src/index.js',
   output: {
-    // eslint-disable-next-line no-undef
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
     clean: true,
+    assetModuleFilename: 'assets/[hash][ext][query]'
   },
   module: {
     rules: [
@@ -25,6 +25,9 @@ export default {
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
+        generator: {
+          filename: 'assets/[name][ext]'
+        }
       },
     ],
   },

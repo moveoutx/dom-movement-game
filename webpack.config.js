@@ -1,9 +1,10 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-module.exports = {
+export default {
   entry: './src/index.js',
   output: {
+    // eslint-disable-next-line no-undef
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
     clean: true,

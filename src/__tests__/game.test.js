@@ -1,4 +1,4 @@
-import Game from '../index';
+import { Game } from '../game';
 
 // Mock для requestAnimationFrame
 global.requestAnimationFrame = (cb) => {
@@ -24,7 +24,7 @@ describe('Game', () => {
   });
 
   afterEach(() => {
-    if (game.stopMovement) {
+    if (game && game.stopMovement) {
       game.stopMovement();
     }
   });

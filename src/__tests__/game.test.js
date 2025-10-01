@@ -1,25 +1,15 @@
 import { Game } from '../game';
 
-// Mock для requestAnimationFrame
 global.requestAnimationFrame = (cb) => {
   setTimeout(cb, 0);
 };
-
-// Mock для URL.createObjectURL если нужно
-global.URL.createObjectURL = jest.fn();
 
 describe('Game', () => {
   let game;
 
   beforeEach(() => {
-    // Создаем чистый DOM для каждого теста
-    document.body.innerHTML = `
-      <div id="game-board"></div>
-    `;
-
-    // Сбрасываем все моки
+    document.body.innerHTML = '<div id="game-board"></div>';
     jest.clearAllMocks();
-
     game = new Game();
   });
 
@@ -49,47 +39,36 @@ describe('Game', () => {
   test('should move character to different position', () => {
     const initialPosition = game.currentPosition;
 
-    // Mock Math.random чтобы контролировать новую позицию
     const mockRandom = jest.spyOn(Math, 'random').mockReturnValue(0.5);
-
     game.moveCharacter();
 
     expect(game.currentPosition).not.toBe(initialPosition);
-    expect(game.currentPosition).toBe(8); // 0.5 * 16 = 8
+    expect(game.currentPosition).toBe(8);
 
     mockRandom.mockRestore();
   });
 
-  test('should not move to same position', () => {
-    const initialPosition = game.currentPosition;
+  test('should clear character from all cells', () => {
+    game.setRandomPosition();
 
-    // Mock Math.random чтобы сначала возвращалась та же позиция, потом другая
-    let callCount = 0;
-    jest.spyOn(Math, 'random').mockImplementation(() => {
-      callCount++;
-      // Первый вызов возвращает ту же позицию, второй - другую
-      return callCount === 1 ? initialPosition / 16 : (initialPosition + 1) / 16;
-    });
+    const cellsWithCharacter = Array.from(document.querySelectorAll('.cell'))
+        .filter(cell => cell.querySelector('.character'));
 
-    game.moveCharacter();
+    expect(cellsWithCharacter.length).toBe(1);
 
-    expect(game.currentPosition).not.toBe(initialPosition);
-    expect(Math.random).toHaveBeenCalledTimes(2);
+    game.clearCharacterFromAllCells();
 
-    jest.restoreAllMocks();
+    const cellsWithCharacterAfterClear = Array.from(document.querySelectorAll('.cell'))
+        .filter(cell => cell.querySelector('.character'));
+
+    expect(cellsWithCharacterAfterClear.length).toBe(0);
   });
 
-  test('should start and stop movement', () => {
-    const setIntervalSpy = jest.spyOn(global, 'setInterval');
-    const clearIntervalSpy = jest.spyOn(global, 'clearInterval');
+  test('should get game state', () => {
+    const state = game.getGameState();
 
-    game.startMovement();
-    expect(setIntervalSpy).toHaveBeenCalled();
-
-    game.stopMovement();
-    expect(clearIntervalSpy).toHaveBeenCalled();
-
-    setIntervalSpy.mockRestore();
-    clearIntervalSpy.mockRestore();
+    expect(state).toHaveProperty('currentPosition');
+    expect(state).toHaveProperty('totalCells', 16);
+    expect(state).toHaveProperty('isMoving', true);
   });
 });

@@ -18,15 +18,13 @@ export class Game {
 
     createGameBoard() {
         const gameBoard = document.getElementById('game-board');
-        if (!gameBoard) return;
-
         gameBoard.innerHTML = '';
 
         for (let i = 0; i < this.boardSize * this.boardSize; i++) {
             const cell = document.createElement('div');
             cell.className = 'cell';
             cell.dataset.index = i;
-            gameBoard.appendChild(cell);
+            gameBoard.append(cell);
             this.cells.push(cell);
         }
     }
@@ -43,33 +41,90 @@ export class Game {
     setRandomPosition() {
         const newPosition = Math.floor(Math.random() * this.boardSize * this.boardSize);
 
-        if (this.currentPosition !== null && this.character.parentNode) {
-            this.character.parentNode.removeChild(this.character);
-        }
+        this.clearCharacterFromAllCells();
 
-        if (this.cells[newPosition]) {
-            this.cells[newPosition].appendChild(this.character);
-            this.currentPosition = newPosition;
-        }
+        this.addCharacterToCell(newPosition);
+        this.currentPosition = newPosition;
+    }
+
+    clearCharacterFromAllCells() {
+        this.cells.forEach(cell => {
+            const existingCharacter = cell.querySelector('.character');
+            if (existingCharacter) {
+                cell.innerHTML = '';
+            }
+        });
+    }
+
+    addCharacterToCell(position) {
+        const characterClone = this.character.cloneNode(true);
+        this.cells[position].append(characterClone);
+        this.character = characterClone;
     }
 
     moveCharacter() {
         let newPosition;
         do {
             newPosition = Math.floor(Math.random() * this.boardSize * this.boardSize);
-        } while (newPosition === this.currentPosition && this.boardSize * this.boardSize > 1);
+        } while (newPosition === this.currentPosition);
 
-        if (this.cells[newPosition] && this.character) {
-            this.character.classList.add('moving');
-            this.cells[newPosition].appendChild(this.character);
-            this.currentPosition = newPosition;
+        this.moveCharacterToPosition(newPosition);
+    }
 
-            setTimeout(() => {
-                if (this.character) {
-                    this.character.classList.remove('moving');
-                }
-            }, 500);
+    moveCharacterToPosition(newPosition) {
+        this.character.classList.add('moving');
+
+        const characterHTML = this.character.outerHTML;
+
+        this.cells[this.currentPosition].innerHTML = '';
+        this.cells[newPosition].innerHTML = characterHTML;
+
+        this.character = this.cells[newPosition].querySelector('.character');
+        this.currentPosition = newPosition;
+
+        setTimeout(() => {
+            this.character.classList.remove('moving');
+        }, 500);
+    }
+
+    moveCharacterWithReplace(newPosition) {
+        this.character.classList.add('moving');
+
+        const newCell = this.cells[newPosition];
+
+        if (newCell.firstChild) {
+            const characterClone = this.character.cloneNode(true);
+            newCell.firstChild.replaceWith(characterClone);
+        } else {
+            newCell.append(this.character.cloneNode(true));
         }
+
+        this.cells[this.currentPosition].innerHTML = '';
+
+        this.character = newCell.querySelector('.character');
+        this.currentPosition = newPosition;
+
+        setTimeout(() => {
+            this.character.classList.remove('moving');
+        }, 500);
+    }
+
+    moveCharacterWithInsertHTML(newPosition) {
+        this.character.classList.add('moving');
+
+        const currentCell = this.cells[this.currentPosition];
+        const newCell = this.cells[newPosition];
+
+        currentCell.innerHTML = '';
+
+        newCell.insertAdjacentHTML('beforeend', this.character.outerHTML);
+
+        this.character = newCell.querySelector('.character');
+        this.currentPosition = newPosition;
+
+        setTimeout(() => {
+            this.character.classList.remove('moving');
+        }, 500);
     }
 
     startMovement() {
@@ -84,4 +139,28 @@ export class Game {
             this.moveInterval = null;
         }
     }
+
+    getGameState() {
+        return {
+            currentPosition: this.currentPosition,
+            totalCells: this.cells.length,
+            isMoving: this.moveInterval !== null
+        };
+    }
+
+    getCurrentPositionInfo() {
+        if (this.currentPosition === null) return null;
+
+        const row = Math.floor(this.currentPosition / this.boardSize);
+        const col = this.currentPosition % this.boardSize;
+
+        return {
+            index: this.currentPosition,
+            row: row + 1,
+            column: col + 1,
+            cell: this.cells[this.currentPosition]
+        };
+    }
 }
+
+export default Game;
